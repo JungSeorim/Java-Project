@@ -1,0 +1,47 @@
+package dao;
+import java.util.ArrayList;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class CamfitCrawling {
+	   private WebDriver webDriver;
+	   public static final String WEB_DRIVER_PATH = "C:/chromedriver.exe";
+	   public static final String WEB_DRIVER_ID = "webdriver.chrome.driver";
+
+	   
+//	   환경요소 선택
+	   public ArrayList<String> findNature() {
+		   CamfitCrawling camfitcrawling = new CamfitCrawling();
+		   WebDriver driver = camfitcrawling.webDriver;
+		   String url = "https://camfit.co.kr/search/result";
+		   ArrayList<String> nature = new ArrayList<>();
+		   System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+		  
+//		   환경 클릭
+		   driver = new ChromeDriver();
+		   driver.get(url);
+		 
+		   try {Thread.sleep(5000);} catch (InterruptedException e) {;}
+		   driver.findElement(By.cssSelector("div.swiper-slide-next span.dlthMI")).click();
+//		   driver.findElement(By.xpath("//*[@id=\"root\"]/div/section/div/div[1]/div[2]/div/div/div/div[2]/span")).click();
+		  
+		   
+//		   환경요소 가져오기
+		for (WebElement webElement : driver.findElements(By.cssSelector("div.sc-fIavCj"))) {
+			nature.add(webElement.getText());
+		}
+		System.out.println(nature);
+		int i = 0;
+		
+		for (String str : nature) {
+			System.out.println(++i + str);
+		}
+		
+		return nature;
+	   }
+	   
+	   
+}

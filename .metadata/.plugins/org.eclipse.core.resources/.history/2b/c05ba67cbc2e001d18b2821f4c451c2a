@@ -1,0 +1,33 @@
+package test;
+
+import java.sql.Connection;
+import java.util.Scanner;
+import org.openqa.selenium.By;
+import dao.CamfitCrawling;
+import dao.DBConnection;
+import dao.DiningSite;
+import dao.WeatherCrawling;
+
+public class Test {
+	public static void main(String[] args) {
+
+		Connection connection = DBConnection.getConnection();
+		DiningSite dining = new DiningSite();
+		WeatherCrawling weatherCrawling = new WeatherCrawling();
+		
+		CamfitCrawling cf = new CamfitCrawling();
+		
+		String campingAddress = cf.function();
+		
+		dining.diningmethod(campingAddress);
+		weatherCrawling.getWeahter(campingAddress);
+		
+  	   String query = "SELECT  FROM tbl_userCamfit WHERE USER_ID = ?";
+  	   connection = DBConnecter.getConnection();
+       preparedStatement = connection.prepareStatement(query);
+       preparedStatement.setString(1, id);
+       resultSet = preparedStatement.executeQuery();
+		
+	}
+	
+}

@@ -1,0 +1,27 @@
+package test;
+
+import java.sql.Connection;
+import java.util.Scanner;
+import org.openqa.selenium.By;
+import dao.CamfitCrawling;
+import dao.DBConnection;
+import dao.DiningSite;
+import dao.WeatherCrawling;
+
+public class Test {
+	public static void main(String[] args) {
+
+//		Connection connection = DBConnection.getConnection();
+//		DiningSite dining = new DiningSite();
+//		CamfitCrawling cf = new CamfitCrawling();
+//		cf.function();
+//		dining.diningmethod(cf.function());
+		
+		
+		
+		WeatherCrawling a = new WeatherCrawling();
+		a.weahter("강남구 개포동 개포로");
+		String b = "가나다라";
+		System.out.println(b.contains("나"));
+	}
+}

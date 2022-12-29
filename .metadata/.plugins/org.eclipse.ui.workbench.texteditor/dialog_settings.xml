@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="wrap" value="true"/>
+		<item key="casesensitive" value="false"/>
+		<item key="wholeword" value="false"/>
+		<item key="incremental" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<item key="selection" value="return"/>
+		<list key="findhistory">
+			<item value="return"/>
+			<item value="length"/>
+			<item value="input"/>
+			<item value="Input"/>
+			<item value="webConnection"/>
+			<item value="환경"/>
+			<item value="address"/>
+			<item value="close"/>
+			<item value="url"/>
+			<item value="campAddress"/>
+			<item value="campList"/>
+			<item value="campInfo"/>
+			<item value="campIn"/>
+			<item value="smallLocation"/>
+			<item value="url1"/>
+		</list>
+		<list key="replacehistory">
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="770"/>
+		<item key="DIALOG_Y_ORIGIN" value="364"/>
+		<item key="DIALOG_WIDTH" value="364"/>
+		<item key="DIALOG_HEIGHT" value="468"/>
+		<item key="DIALOG_FONT_NAME" value="1|맑은 고딕|8.861539|0|WINDOWS|1|-16|0|0|0|400|0|0|0|1|0|0|0|0|맑은 고딕"/>
+	</section>
+</section>

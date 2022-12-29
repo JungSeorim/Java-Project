@@ -1,0 +1,23 @@
+package test;
+
+import java.sql.Connection;
+import java.util.Scanner;
+import org.openqa.selenium.By;
+import dao.CamfitCrawling;
+import dao.DBConnection;
+import dao.DiningSite;
+
+public class Test {
+	public static void main(String[] args) {
+
+		Connection connection = DBConnection.getConnection();
+		DiningSite dining = new DiningSite();
+		
+		CamfitCrawling cf = new CamfitCrawling();
+		
+//		cf.function();
+		
+		dining.diningmethod(cf.function());
+		
+	}
+}

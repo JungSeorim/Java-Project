@@ -1,0 +1,13 @@
+package vo;
+
+public class UserVO {
+	private int number;
+	private String name;
+	private String 
+	private String 
+	private String 
+	private String 
+	private String 
+	private String 
+	private String 
+}

@@ -1,0 +1,19 @@
+package dao;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class Service {
+	private WebDriver webDriver;
+	public static final String WEB_DRIVER_PATH = "C:/chromedriver.exe";
+	public static final String WEB_DRIVER_ID = "webdriver.chrome.driver";
+	
+	public static void webDriverConnect() {
+		CamfitCrawling cf = new CamfitCrawling();
+		WebDriver driver = cf.webDriver;
+		System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+		String camfitUrl = "https://camfit.co.kr/search/result";
+		driver = new ChromeDriver();
+		driver.get(camfitUrl);
+	}
+}

@@ -1,0 +1,36 @@
+package test;
+
+import java.sql.Connection;
+import java.util.Scanner;
+import org.openqa.selenium.By;
+import dao.CamfitCrawling;
+import dao.DBConnection;
+import dao.DiningSite;
+import dao.WeatherCrawling;
+
+public class Test {
+	public static void main(String[] args) {
+
+//		Connection connection = DBConnection.getConnection();
+//		DiningSite dining = new DiningSite();
+//		CamfitCrawling cf = new CamfitCrawling();
+//		cf.function();
+//		dining.diningmethod(cf.function());
+		
+		
+		
+		WeatherCrawling a = new WeatherCrawling();
+		
+		
+		String address = "서울시 강남구 개포로 32";
+		String [] data = address.split(" ");
+		for (int i = 0; i < 3; i++) {
+			address = data[i]+" ";
+		}
+		address += "날씨";
+		
+		System.out.println(address);
+		
+	}
+	
+}

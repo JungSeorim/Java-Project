@@ -1,0 +1,9 @@
+package dao;
+
+import org.openqa.selenium.WebDriver;
+
+public class WeatherCrawling {
+	private WebDriver webDriver;
+	public static final String WEB_DRIVER_PATH = "C:/chromedriver.exe";
+	public static final String WEB_DRIVER_ID = "webdriver.chrome.driver";
+}

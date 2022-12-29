@@ -1,0 +1,10 @@
+package dao;
+
+public class testd {
+public static void main(String[] args) {
+	String choice = "3";
+	
+	System.out.println((Integer.parseInt(choice))+1);
+	System.out.println((Integer.parseInt(choice)+1));
+}
+}

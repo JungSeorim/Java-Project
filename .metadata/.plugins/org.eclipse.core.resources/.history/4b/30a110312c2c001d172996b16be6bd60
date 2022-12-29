@@ -1,0 +1,30 @@
+package test;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import dao.DBConnecter;
+
+public class test {
+	public static void main(String[] args) {
+		Connection connection = null;
+      try {
+//    연결 객체 가져오기
+    connection = DBConnecter.getConnection();
+ } catch (Exception e) {
+    e.printStackTrace();
+ } finally {
+//    만약 드라이버가 열려 있다면,
+    if(connection != null) {
+       try {
+//          닫아준다.
+          connection.close();
+       } catch (SQLException e) {
+//          드라이버를 닫다가 오류가 발생하면, 예외 던지기를 사용하여 직접 예외를 발생 시켜주고,
+//          프로세스를 강제 종료 시킨다.
+          throw new RuntimeException(e.getMessage());
+       }
+    }
+ }
+	}
+}

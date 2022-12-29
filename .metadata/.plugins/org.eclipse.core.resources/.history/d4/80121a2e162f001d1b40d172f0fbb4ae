@@ -1,0 +1,28 @@
+package test;
+
+import java.net.SocketException;
+import java.sql.Connection;
+
+import dao.CamfitCrawling;
+import dao.DBConnecter;
+import dao.DiningSite;
+import dao.WeatherCrawling;
+
+public class Test {
+	public static void main(String[] args) throws SocketException{
+
+		Connection connection = DBConnecter.getConnection();
+		DiningSite dining = new DiningSite();
+		WeatherCrawling weatherCrawling = new WeatherCrawling();
+		
+		CamfitCrawling cf = new CamfitCrawling();
+		
+		String campingAddress = cf.function();
+		
+		dining.diningmethod(campingAddress);
+		weatherCrawling.getWeahter(campingAddress);
+		
+		
+		
+	}
+}

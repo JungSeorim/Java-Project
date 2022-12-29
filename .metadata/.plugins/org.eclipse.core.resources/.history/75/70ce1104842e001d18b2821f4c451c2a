@@ -1,0 +1,59 @@
+package vo;
+
+public class DiningCodeVO {
+
+	private int userNumber;
+	private String storeName;
+	private String storeLocation;
+	private String storeMenu;
+	private String storeScore;
+	
+	public DiningCodeVO() {;}
+
+	public int getUserNumber() {
+		return userNumber;
+	}
+
+	public void setUserNumber(int userNumber) {
+		this.userNumber = userNumber;
+	}
+
+	public String getStoreName() {
+		return storeName;
+	}
+
+	public void setStoreName(String storeName) {
+		this.storeName = storeName;
+	}
+
+	public String getStoreLocation() {
+		return storeLocation;
+	}
+
+	public void setStoreLocation(String storeLocation) {
+		this.storeLocation = storeLocation;
+	}
+
+	public String getStoreMenu() {
+		return storeMenu;
+	}
+
+	public void setStoreMenu(String storeMenu) {
+		this.storeMenu = storeMenu;
+	}
+
+	public String getStoreScore() {
+		return storeScore;
+	}
+
+	public void setStoreScore(String storeScore) {
+		this.storeScore = storeScore;
+	}
+
+	@Override
+	public String toString() {
+		return "DiningCodeVO [userNumber=" + userNumber + ", storeName=" + storeName + ", storeLocation="
+				+ storeLocation + ", storeMenu=" + storeMenu + ", storeScore=" + storeScore + "]";
+	}
+	
+}

@@ -1,0 +1,11 @@
+package vo;
+
+public class RecommandVO {
+	private String 
+	private String 
+	private String 
+	private String 
+	private String 
+	private String 
+	
+}

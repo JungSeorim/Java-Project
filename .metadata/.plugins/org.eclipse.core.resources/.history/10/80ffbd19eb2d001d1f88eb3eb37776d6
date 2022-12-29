@@ -1,0 +1,57 @@
+package dao;
+import java.util.List;
+import java.util.Scanner;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+public class DiningCrawling {
+	private WebDriver webDriver;
+	public static final String WEB_DRIVER_PATH = "C:/chromedriver.exe";
+	public static final String WEB_DRIVER_ID = "webdriver.chrome.driver";
+		
+		DiningCrawling dining = new DiningCrawling();
+		String url = "https://www.diningcode.com/search?";
+		WebDriver driver = dining.webDriver;
+		Method key = new Method();
+		int k = 0;
+		System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+		driver = new ChromeDriver();
+		driver.get(url);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			;
+		}
+		WebElement searchInput = driver.findElement(By.className("searchInput"));
+		
+		
+		searchInput.click();
+		searchInput.sendKeys("잠실 고기");
+		driver.findElement(By.cssSelector("button.search img#SearchImg")).click();
+		
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+		}
+		WebElement rist1to5 = driver.findElement(By.className("RList"));
+		List<WebElement> storesList = rist1to5.findElements(By.className("RHeader"));
+		for (WebElement store : storesList) {
+			String name = store.findElement(By.className("InfoHeader")).getText();
+			List<WebElement> list = store.findElements(By.cssSelector("p.Category"));
+			String temp = "";
+			for (WebElement webElement : list) {
+				temp += webElement.getText()+"/";
+			}
+			String info = temp.substring(0, temp.indexOf("\n"));// 송리단길
+			String menu = temp.substring(temp.indexOf("\n")).replace("\n", "").replace("/", "");
+			
+			
+			String score = store.findElement(By.className("Score")).getText();
+			System.out.println(++k + ".상호명 : " + key.removeNumber(name));
+			System.out.println("위치 : " + info);
+			System.out.println("메뉴 : " + menu);
+			System.out.println("점수 : " + score);
+			System.out.println("----------------------------------------");
+	}
+}

@@ -1,0 +1,9 @@
+package dao;
+
+public class Method {
+
+	public String removeNumber(String content) {
+//		"1. 애슐리"라고 한다면 "1. " 제거
+		return content.substring(content.indexOf(" ")+1);
+	}
+}

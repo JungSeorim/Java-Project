@@ -1,0 +1,52 @@
+package dao;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class WeatherCrawling {
+
+	private WebDriver webDriver;
+	public static final String WEB_DRIVER_PATH = "C:/chromedriver.exe";
+	public static final String WEB_DRIVER_ID = "webdriver.chrome.driver";
+
+	public void getWeahter(String address) {
+		DiningSite dining = new DiningSite();
+		String url = "https://www.google.com/";
+		WebDriver driver = dining.webDriver;
+		System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+		driver = new ChromeDriver();
+		driver.get(url);
+		try {Thread.sleep(1000);} catch (InterruptedException e) {;}
+
+		String weatherInfo = "", temperature = "", time = "", condition = "";
+		String[] divAddress = address.split(" ");
+		String getLocation = divAddress[0] + " " + divAddress[1] + " " + divAddress[2] + " ³¯¾¾";
+		List<WebElement> weatherInfos = null;
+		WebElement input = null;
+		
+		input = driver.findElement(By.cssSelector("input.gLFyf"));
+		input.sendKeys(getLocation);
+		input.sendKeys(Keys.RETURN);
+		try {Thread.sleep(1000);} catch (InterruptedException e) {;}
+//		¿Âµµ,°­¼öÈ®·ü, ½Àµµ, Ç³¼Ó, ½Ã°£, ³¯¾¾Á¤º¸(¸¼À½ µî...)
+		temperature = driver.findElement(By.id("wob_tm")).getText();
+		time = driver.findElement(By.id("wob_dts")).getText();
+		condition = driver.findElement(By.id("wob_dc")).getText();
+		
+		weatherInfos = driver.findElements(By.cssSelector("div.wtsRwe"));
+		
+		weatherInfo += getLocation + " ÀÔ´Ï´Ù\n" + temperature + "µµ\n";
+		for (WebElement webElement : weatherInfos) {
+			weatherInfo += webElement.getText()+"\n";
+		}
+		weatherInfo += time + "\n" + condition + "\n";
+
+		System.out.println(weatherInfo);
+	}
+
+}

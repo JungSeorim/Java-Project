@@ -1,0 +1,96 @@
+package dao;
+
+import java.util.ArrayList;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class WeatherCrawling {
+	private WebDriver webDriver;
+	public static final String WEB_DRIVER_PATH = "C:/chromedriver.exe";
+	public static final String WEB_DRIVER_ID = "webdriver.chrome.driver";
+	
+//	날씨 가져오는 메소드
+	public void weahter(String address) {
+		WeatherCrawling wc = new WeatherCrawling();
+		WebDriver driver = wc.webDriver;
+		
+		System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+		String url = "https://www.google.com/";
+		try {Thread.sleep(1000);} catch (InterruptedException e) {;}
+		driver = new ChromeDriver();
+		driver.get(url);
+
+		
+//		[{경기}, {양평군}, {서종면}] 화서로 532-6
+//		공백" "이 두개면 그냥 거기까지만
+//		공백 기준으로 세 개
+		String str = "";
+		
+		String [] data = address.split(" ");
+//		str = data[0]+data[1]+data[2]+" 날씨";
+		
+		for (int i = 0; i < 3; i++) {
+			str += data[i]+" ";
+		}
+
+		int count = 0;
+		
+		for (int i = 0; i < address.length(); i++) {
+			//	한글자씩 검사했을 때
+			if((address.charAt(i)+"").contains(" ")) {
+				count++;
+				if(count==2) {
+					address.substring(0, i+1);
+					break;
+				}
+			}
+		}
+
+		
+		
+		
+		
+//		검색창 찾기
+		WebElement searchBox = driver.findElement(By.cssSelector("input.gsfi"));
+//		검색창 클릭
+		searchBox.click();
+		searchBox.sendKeys(address);
+		
+//		검색(Enter)키
+		searchBox.sendKeys(Keys.RETURN);
+		try {Thread.sleep(1000);} catch (InterruptedException e) {;}
+
+//		기온
+		String temperature = driver.findElement(By.cssSelector("#wob_tm")).getText()+"°C";
+		
+//		강수확률
+		String rainy = driver.findElement(By.cssSelector("#wob_pp")).getText();
+
+//		습도
+		String huminity = driver.findElement(By.cssSelector("#wob_hm")).getText();
+
+//		바람
+		String windy = driver.findElement(By.cssSelector("#wob_tws")).getText()+"m/s";
+		
+		System.out.println("기온:\t"+temperature);
+		System.out.println("비 확률:\t"+rainy);
+		System.out.println("습도:\t"+huminity);
+		System.out.println("풍속:\t"+windy);
+		
+		driver.close();
+	}
+	
+	
+		
+
+
+
+
+
+
+
+}

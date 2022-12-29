@@ -1,0 +1,401 @@
+package dao;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+public class Funtions {
+
+	private WebDriver webDriver;
+	public static final String WEB_DRIVER_PATH = "C:/chromedriver.exe";
+	public static final String WEB_DRIVER_ID = "webdriver.chrome.driver";
+	Scanner sc = new Scanner(System.in);
+
+	String camfitUrl = "https://camfit.co.kr/search/result";
+	int number = 0, choice = 0;
+	String bigLocationUrl = "", smallLocationUrl = "";
+	String campTypeUrl = "", locationTypeUrl = "";
+	String temp = "", temp2 = "";
+	ArrayList<String> bigLocation = null;
+	WebDriver driver = webConnection();
+
+	public WebDriver webConnection() {
+		System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+		WebDriver driver = webDriver;
+		driver = new ChromeDriver();
+		driver.get(camfitUrl);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			;
+		}
+		return driver;
+	}
+
+	// ================================지역 선택================================
+	public void locationSelect() {
+		driver.findElement(By.cssSelector("div.right-input input.jRXicD")).click();
+		// 큰지역 요소들 Arraylist 담아주기
+		bigLocation = new ArrayList<>();
+		for (WebElement webElement : driver.findElements(By.cssSelector("li.jAJMLG p.typography-regular"))) {
+			bigLocation.add(webElement.getText());
+		}
+		// 큰지역 목록 출력 ex)1.경기
+		for (int i = 0; i < bigLocation.size(); i++) {
+			System.out.println(i + 1 + ". " + bigLocation.get(i).substring(0, 3));
+		}
+
+		// 사용자에게 큰지역 입력(선택) 받기
+		System.out.println("1. 지역 번호를 입력해주세요");
+		choice = sc.nextInt();
+		// 사용자에게 받은 번호 = 1.경기~ 12.제주 번호와 동일
+		temp2 = "ul.sc-jGprRt>li:nth-child(" + choice + ")";
+		driver.findElement(By.cssSelector(temp2)).click();
+		// 가져오면 경기(102), 인천(9) 이런 식으로 가져오는데 여기서 지역명만 추출하기
+		String bigLocationName = bigLocation.get(choice - 1).substring(0, 2);
+		
+		// 주소에 붙일 url 작성
+		bigLocationUrl += "?city=" + bigLocationName;
+		// 세종, 제주의 경우 해당 사이트 url에서 검색 조건이 풀네임이므로 해당 경우에 한해 상세정보를 더 붙여서 가져옴
+		if (bigLocationName.equals("세종")) {
+			bigLocationUrl += "특별자치시";
+		}
+		if (bigLocationName.equals("제주")) {
+			bigLocationUrl += "특별자치도";
+		}
+
+		// =======================작은 지역 클릭하기 (단, 0 입력하면선택완료)====================
+		// 작은 지역들을 담아둘 Arraylist 생성
+		ArrayList<String> smallLocation = new ArrayList<>();
+		for (WebElement webElement : driver.findElements(By.cssSelector("ul.sc-hAsxaJ li.jAbgnw"))) {
+			smallLocation.add(webElement.getText());
+		}
+		// 상세 지역이 출력 될 때 가독성이 떨어지게 출력이 되곤 했는데, 이 부분을 가독성 좋게 만들어주는 작업.
+		number = 0;
+		for (number = 0; number < smallLocation.size(); number++) {
+			System.out.println(number + 1 + ". " + smallLocation.get(number).replace("\n", "").substring(0, 3));
+		}
+		System.out.println(0 + ". 선택완료");
+		System.out.println("2. 지역 번호를 입력해주세요");
+		// 선택
+		temp2 = "";
+		String smallLocationNames = "";// 지역들 모음
+		while (true) {
+			choice = sc.nextInt();
+			if (choice == 0) {// 0입력 탈출
+				break;
+			}
+//				지역명의 괄호 분리
+			String smallLocationName1 = smallLocation.get(choice - 1).replace("\r", "").replace("\n", "");
+			String smallLocationName = smallLocationName1.substring(0, smallLocationName1.indexOf("("));
+//					지역 클릭
+			temp2 = "ul.fuIZQM>li:nth-child(" + choice + ")";
+			driver.findElement(By.cssSelector(temp2)).click();
+//					-1이 아니라는 것은 해당 문자가 temp2에 이미 있을 때
+			if (temp2.indexOf(choice + "") != -1) {// 체크 해제
+//						choice가 temp2에서 몇번쨰 인덱스있는지
+				int index = temp2.indexOf(choice + "");
+//						해당 인덱스에 있는 문자를 빈문자열로 바꿈
+				temp2 = temp2.replace(temp2.charAt(index) + "", "");
+//						지역모음에서 ,지역명이 있다면 ,지역명을 빈문자열로
+				if (smallLocationNames.contains("," + smallLocationName)) {
+					smallLocationNames = smallLocationNames.replace("," + smallLocationName, "");
+				} else {//
+//							지역모음에서 지역명이 있다면 지역명을 빈문자열로
+					smallLocationNames = smallLocationNames.replace(smallLocationName, "");
+				}
+			} else {// 체크 되었을 때
+//						값이 하나라도 있다면 ,를 붙여줌
+				if (temp2.length() > 0) {
+					smallLocationNames += ",";
+				}
+//						지역모음에 담음
+				smallLocationNames += smallLocationName;
+//						번호모음
+				temp2 += choice;
+			}
+			if (temp2.length() == 0) {// temp2가 0이라면 지역모음도 당연히 0
+				smallLocationNames = "";
+			}
+			/// 3개 꽉 채웠을 때
+			if (temp2.length() == 3) {
+				break;
+			}
+			
+		}
+		
+//		주소 합치기
+		
+		//받은번호(temp2)가 있을 때
+		if (temp2.length() > 0) {
+			//작은지역의 주소를 추가한다.
+			smallLocationUrl += "&majors=";
+		}
+		smallLocationUrl += smallLocationNames;
+		System.out.println(smallLocationUrl);
+		
+		//닫기버튼
+		driver.findElement(By.cssSelector("ul.gSSvYn")).click();
+	}
+
+	
+	
+	
+	// ==========================캠핑 유형 선택==========================================
+	public void campTypeSelect() {
+		//주소타입을 문자열로 받아놓기
+		String[] engTypes = { "autoCamping", "glamping", "caravan", "pension", "bungalow", "carCamping" };
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			;
+		}
+		
+		//캠핑유형 클릭
+		driver.findElement(By.cssSelector("div.swiper-slide span.dlthMI")).click();
+		
+		ArrayList<String> type = new ArrayList<>();
+		
+		//캠핑유형 목록 가져오기
+		for (WebElement types : driver.findElements(By.cssSelector("div.sc-fIavCj"))) {
+			try {Thread.sleep(100);} catch (InterruptedException e) {;}
+			String getType = types.getText();
+			type.add(getType);
+		}
+		//목록출력
+		for (int i = 0; i < type.size(); i++) {
+			System.out.println(i + 1 + ". " + type.get(i));
+		}
+		System.out.println("0. 선택완료");
+		
+		//클릭
+		temp2 = "";
+		String campTypes = "";
+		
+		//캠피유형 선택시 버튼클릭 중복해제
+		while (true) {
+			choice = sc.nextInt();
+			if (choice == 0) {
+				break;
+			}
+			
+			//큰 지역 버튼 클릭 (자식태그에 선택한 번호를 넣어준다.)
+			temp2 = "div.MuiPaper-root div:nth-child(" + (choice + 1) + ")";
+			driver.findElement(By.cssSelector(temp2)).click();
+			
+			//사용자가 입력한 번호가 중복된 번호라면,
+			if (temp2.indexOf(choice + "") != -1) {
+				int index = temp2.indexOf(choice + "");
+				//temp2에 추가하지 않고 없애준다.
+				temp2 = temp2.replace(temp2.charAt(index) + "", "");
+				//주소타입에도 추가하지 않고 없애준다.
+				if (campTypes.contains("," + engTypes[choice - 1])) {
+					campTypes = campTypes.replace("," + engTypes[choice - 1], "");
+				} else {
+					//아니면 추가해준다.
+					campTypes = campTypes.replace(engTypes[choice - 1], "");
+				}
+				
+			}
+			
+			
+//				예시 : result?city=경기&locationTypes=ocean,mountain,valley&majors=가평군%2C용인시&types=autoCamping
+			
+			//받은 사용자 번호가 중복되지 않았고,
+			else {
+				//캠핑타입이 여러개라면
+				if (temp2.length() > 0) {
+					//주소에 "," 추가해준다.
+					campTypes += ",";
+				}
+				//engTypes에 담긴 값을 불러와 영어로 바꿔준다.
+				campTypes += engTypes[choice - 1];
+				//(중복확인용 count 해주기)
+				temp2 += choice;
+			}
+			//캡핑타입은 최소 0개
+			if (temp2.length() == 0) {
+				campTypes = "";
+			}
+			//캠핑타입은 최대 6개
+			if (temp2.length() == 6) {
+				break;
+			}
+		}
+		//캠핑타입의 최종주소
+		if (temp2.length() > 0) {
+			campTypeUrl += "&types=";
+		}
+		campTypeUrl += campTypes;
+		System.out.println(campTypeUrl);
+		
+		driver.findElement(By.cssSelector("div.MuiPaper-root div.dqOnwu svg")).click();
+	}
+
+	
+	// ==========================환경 유형 선택============================
+		public void locationTypeSelect() {
+			String choicedBigLocation = "",locationTypes = "", locationTypeList = "";
+//			주소창에는 산,계곡...이렇게 나오는게 아니라 영어로 나오기 때문에 영어글자 모음 배열
+			String[] engLocationType = { "ocean", "mountain", "forest", "river", "lake", "valley", "island", "flat",
+					"etc" };
+			try {Thread.sleep(2000);} catch (InterruptedException e) {;}
+			// 환경 클릭
+			driver.findElement(By.cssSelector("div.swiper-slide-next span.dlthMI")).click();
+			ArrayList<String> nature = new ArrayList<>(); // 환경요소들 담을 ArrayList
+			// 환경 요소들 불러오기
+			for (WebElement types : driver.findElements(By.cssSelector("div.fLWjSa"))) {
+				try {Thread.sleep(100);} catch (InterruptedException e) {;}
+				String getType = types.getText();
+				nature.add(getType); // nature변수에 환경요소들 담기
+			}
+//			뽑아온 환경요소로 사용자에게 보여줄 목록보여주기
+			for (int i = 0; i < nature.size(); i++) {
+				locationTypeList += i + 1 + ". " + nature.get(i) + "\n";// 순서대로 목록 출력
+			}
+			locationTypeList += "0. 선택완료\n원하는 환경종류의 번호를 선택하세요.";
+			System.out.println(locationTypeList);
+			
+			temp2 = "";
+			locationTypes = "";//빈문자열로 초기화 되었겠지만 일단 초기화
+			while (true) {
+				choice = sc.nextInt(); // 사용자가 입력할 목록 번호
+				if (choice == 0) { // 0누르면 선택완료
+					break;
+				}
+				choicedBigLocation = "div.MuiPaper-root div:nth-child(" + (choice + 1) + ")"; // 환경목록들 예)산,바다,계곡 등을 선택
+				driver.findElement(By.cssSelector(choicedBigLocation)).click(); // 선택한 목록 클릭
+				if (temp2.indexOf(choice + "") != -1) { // 사용자가 입력한 환경요소가 이미 있다면 아래 코드 실행(체크해제)
+					int index = temp2.indexOf(choice + "");//입력한 번호가 있는 인덱스 찾음
+					temp2 = temp2.replace(temp2.charAt(index) + "", "");//이미 있는 번호를 지워줌
+					if (locationTypes.contains("," + engLocationType[choice - 1])) {//문자열이 ",mountain"이렇게 되어있을 경우
+						locationTypes = locationTypes.replace("," + engLocationType[choice - 1], "");// mountain만 지우면 ','이 남기 때문에 그것도 같이 지워줌
+					} else {//아니라는 거는 쉼표가 없는거니까
+						locationTypes = locationTypes.replace(engLocationType[choice - 1], "");//그냥 글자만 지워줌
+					}
+				} else {//사용자가 새로운 번호를 입력할 경우
+					if (temp2.length() > 0) {//길이가 1이상일 경우 선택된 환경이 있다는 거니까
+						locationTypes += ",";//쉼표 붙히고
+					}
+					locationTypes += engLocationType[choice - 1];//선택된 환경에 연결
+					temp2 += choice;//어떤게 입력 되었는지 확인하기 위해 temp2에 입력한 번호 저장
+				}
+				if (temp2.length() == 0) {//temp2의 길이가 0이라는 거는
+					locationTypes = "";//locationTypes도 빈문자열이여야 한다.(혹시 몰라작성)
+				}
+			}
+			driver.findElement(By.cssSelector("div.MuiPaper-root button span")).click();
+			if (temp2.length() > 0) {//1이상 있다는 것은 사용자가 뭐라도 선택한 거니까
+				locationTypeUrl += "&locationTypes=";//주소 형식에 맞는 "&locationTypes=" 를 맨앞에 붙혀줌
+			}
+			locationTypeUrl += locationTypes;//"&locationTypes="이것과 위에서 선택 했던 환경의 영어 이름을 합침
+		}
+		
+		
+		
+	// ========================위의 정보로 주소 합침=============================
+	public String getAddress() {
+		driver.close();
+		String sumUrl = camfitUrl + bigLocationUrl + locationTypeUrl + smallLocationUrl + campTypeUrl;
+		System.out.println(sumUrl);
+		driver = new ChromeDriver();
+		driver.get(sumUrl);
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			;
+		}
+//				캠핑장의 주소모음
+		ArrayList<String> campAddress = new ArrayList<String>();
+//				가공되지 않은 url
+		List<WebElement> campUrls = driver.findElements(By.cssSelector("div a"));
+//				각 캠프소개로 이어지는 url모음
+		ArrayList<String> campUrl = new ArrayList<String>();
+//				가공되지 않은 campUrls에 href로 주소만 뽑아옴
+		for (WebElement webElement : campUrls) {
+			campUrl.add(webElement.getAttribute("href"));
+		}
+//				마지막에 사용할 캠핑장의 정보 모음들
+		String campList = "";
+		number = 0;
+		ChromeOptions options = new ChromeOptions();
+		
+		System.out.println("가까운 맛집을 검색하고 있습니다...");
+		
+//		url모음을 전부 다 들어가봄
+		for (String url : campUrl) {
+//					드라이버 새로 엶
+			driver = new ChromeDriver(options);
+			driver.get(url);
+			options.addArguments("headless");	//headless때문에
+
+			try {Thread.sleep(5000);} catch (InterruptedException e) {;}
+//					목록에 순서 부여
+			number++;
+//					캠핑장 정보(대표전화, 주소)
+			List<WebElement> campInfo = driver.findElements(By.cssSelector("li.withBtn p"));
+			System.out.println(campInfo.size());
+//					대표번호
+			String generalDirectoryNumber = campInfo.get(0).getText();
+//					주소
+			campAddress.add(campInfo.get(1).getText());
+//					System.out.println(driver.findElement(By.cssSelector("ul.sc-gHPqQ1 li:nth-child(3) p")).getText());
+//					System.out.println(driver.findElement(By.cssSelector("ul.sc-gHPqQ1 li:nth-child(4) p")).getText());
+//					String generalDirectoryNumber =driver.findElement(By.cssSelector("ul.sc-gHPqQ1 li:nth-child(3) p")).getText();
+//					campAddress.add(driver.findElement(By.cssSelector("ul.sc-gHPqQ1 li:nth-child(4) p")).getText());
+//					캠핑장 기본 시설 가져오기
+			String basics = "";
+			List<WebElement> basicService = driver
+					.findElements(By.cssSelector("div.sc-bBXxYQ div:nth-child(1) div.sc-grVGCS li"));
+			for (WebElement webElement : basicService) {
+				basics += (webElement.getText() + " ");
+			}
+			if (basics.length() == 0) {
+				basics = "없음";
+			}
+//					캠핑장 부가 시설 가져오기
+			String additionals = "";
+			List<WebElement> additionalService = driver
+					.findElements(By.cssSelector("div.sc-bBXxYQ div:nth-child(2) div.sc-grVGCS li"));
+			for (WebElement webElement : additionalService) {
+				additionals += (webElement.getText() + " ");
+			}
+			if (basics.length() == 0) {
+				additionals = "없음";
+			}
+//					캠핑장 레저 시설 가져오기
+			String leisures = "";
+			List<WebElement> leisureService = driver
+					.findElements(By.cssSelector("div.sc-bBXxYQ div:nth-child(3) div.sc-grVGCS li"));
+			for (WebElement webElement : leisureService) {
+				leisures += (webElement.getText() + " ");
+			}
+
+			if (basics.length() == 0) {
+				leisures = "없음";
+			}
+//					캠핑장 이름,대표 전화,시설및 레저 출력
+			campList += number + ". " + driver.findElement(By.className("margin")).getText() + "\n" + "대표전화 : "
+					+ generalDirectoryNumber + "\n" + "기본시설 : " + basics + "\n" + "부가시설 : " + additionals + "\n"
+					+ "레저시설 : " + leisures + "\n";
+			campList += "------------------------------------\n";
+
+			if (number == 5) {
+				break;
+			}
+		}
+		System.out.println(campList);
+		System.out.println("번호를 입력하시면 근처 맛집을 찾아 드립니다");
+		choice = sc.nextInt();
+		System.out.println(campAddress.get(choice - 1));
+
+		return campAddress.get(choice - 1);
+	}
+
+}

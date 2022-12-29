@@ -1,0 +1,69 @@
+package vo;
+
+public class CamfitVO {
+	private int userNumber;
+	private String campingName;
+	private String campingPhone;
+	private String basicService;
+	private String additionalService;
+	private String leisureService;
+	
+	public CamfitVO() {;}
+
+	public int getNumber() {
+		return userNumber;
+	}
+
+	public void setNumber(int number) {
+		this.userNumber = number;
+	}
+
+	public String getCampingName() {
+		return campingName;
+	}
+
+	public void setCampingName(String campingName) {
+		this.campingName = campingName;
+	}
+
+	public String getPhone() {
+		return campingPhone;
+	}
+
+	public void setPhone(String phone) {
+		this.campingPhone = phone;
+	}
+
+	public String getBasicService() {
+		return basicService;
+	}
+
+	public void setBasicService(String basicService) {
+		this.basicService = basicService;
+	}
+
+	public String getAdditionalService() {
+		return additionalService;
+	}
+
+	public void setAdditionalService(String additionalService) {
+		this.additionalService = additionalService;
+	}
+
+	public String getLeisureService() {
+		return leisureService;
+	}
+
+	public void setLeisureService(String leisureService) {
+		this.leisureService = leisureService;
+	}
+
+	@Override
+	public String toString() {
+		return "CamfitVO [number=" + userNumber + ", campingName=" + campingName + ", phone=" + campingPhone + ", basicService="
+				+ basicService + ", additionalService=" + additionalService + ", leisureService=" + leisureService
+				+ "]";
+	}
+	
+	
+}

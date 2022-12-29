@@ -1,0 +1,17 @@
+package dao;
+
+public class Method {
+
+//	목록 가져올때 깔끔하게 출력하기 위한 메소드
+	public String removeNumber(String content) {
+//		"1. 애슐리"라고 한다면 "1. " 제거
+		return content.substring(content.indexOf(" ")+1);
+	}
+	
+//	주소 검색시 상세주소로 인해 검색이 안되는경우 상세주소 제거 메소드
+	public String removeAddress(String address) {//주소의 시구동 다음의 상세주소 삭제(검색이 안되는 경우가 있기에)
+		String[] divAddress = address.split(" "); //띄어쓰기로 분리
+		String getLocation = divAddress[0] + " " + divAddress[1] + " " + divAddress[2];//3번째(index=2)까지가 동포지션
+		return getLocation;
+	}
+}

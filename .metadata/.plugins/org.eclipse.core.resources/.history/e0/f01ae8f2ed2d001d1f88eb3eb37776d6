@@ -1,0 +1,566 @@
+package dao;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class CamfitCrawling {
+   private WebDriver webDriver;
+   public static final String WEB_DRIVER_PATH = "C:/chromedriver.exe";
+   public static final String WEB_DRIVER_ID = "webdriver.chrome.driver";
+
+//   경기, 인천 등 가져다 주는 메소드
+   public ArrayList<String> getBigLocation() {
+      CamfitCrawling cf = new CamfitCrawling();
+      String url = "https://camfit.co.kr/search/result";
+      WebDriver driver = cf.webDriver;
+      String countText = null;
+      
+//                  운영체제에 드라이버 설정
+      System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+//                  WebDriver객체에 크롬 드라이버 대입
+      driver = new ChromeDriver();
+//                  원하는 경로를 브라우저에 전달
+      driver.get(url);
+      try {
+         Thread.sleep(3000);
+      } catch (InterruptedException e) {
+         ;
+      }
+      // 페이지내에서.요소찾기(<input>, 클래명 = Search-Input);
+      WebElement btn = driver.findElement(By.cssSelector("div.right-input input.jRXicD"));
+      // 검색창 클릭
+      btn.click();
+//            List<WebElement> bigLocation = driver.findElements(By.className("jAJMLG"));
+//                for(WebElement location : bigLocation) {
+//                   String name = location.findElement(By.className("typography-regular")).getText();
+//                   System.out.println("지역명 : "+ name);
+//                   System.out.println("----------------------------------------");
+//                }
+      ArrayList<String> bigLocation = new ArrayList<>();
+      for (WebElement webElement : driver.findElements(By.cssSelector("li.jAJMLG p.typography-regular"))) {
+         bigLocation.add(webElement.getText());
+      }
+      driver.close();
+      return bigLocation;
+   }
+
+//   사용자가 큰 지역 선택한 번호로 클릭 후 작은 지역 출력
+   public ArrayList<String> getSmallLocation(int bigLocationChoice) {
+      CamfitCrawling cf = new CamfitCrawling();
+      String url = "https://camfit.co.kr/search/result";
+      WebDriver driver = cf.webDriver;
+//            운영체제에 드라이버 설정
+      System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+//            WebDriver객체에 크롬 드라이버 대입
+      driver = new ChromeDriver();
+//            원하는 경로를 브라우저에 전달
+      driver.get(url);
+      try {
+         Thread.sleep(3000);
+      } catch (InterruptedException e) {
+         ;
+      }
+//       페이지내에서.요소찾기(<input>, 클래명 = Search-Input);
+      WebElement btn = driver.findElement(By.cssSelector("div.right-input input.jRXicD"));
+      // 검색창 클릭
+      btn.click();
+      String temp = "ul.sc-jGprRt>li:nth-child(" + bigLocationChoice + ")";
+      WebElement btn1 = driver.findElement(By.cssSelector(temp));
+      btn1.click();
+      ArrayList<String> smallLocation = new ArrayList<>();
+      for (WebElement webElement : driver.findElements(By.cssSelector("ul.sc-hAsxaJ li.jAbgnw"))) {
+         smallLocation.add(webElement.getText());
+      }
+      driver.close();
+      return smallLocation;
+   }
+
+//      환경요소 선택
+   public ArrayList<String> findNature() {
+      CamfitCrawling camfitcrawling = new CamfitCrawling();
+      WebDriver driver = camfitcrawling.webDriver;
+      String url = "https://camfit.co.kr/search/result";
+      System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+      ArrayList<String> nature = new ArrayList<>();
+//         환경 클릭
+      driver = new ChromeDriver();
+      driver.get(url);
+      try {
+         Thread.sleep(5000);
+      } catch (InterruptedException e) {
+         ;
+      }
+      driver.findElement(By.cssSelector("div.swiper-slide-next span.dlthMI")).click();
+//         driver.findElement(By.xpath("//*[@id=\"root\"]/div/section/div/div[1]/div[2]/div/div/div/div[2]/span")).click();
+//         환경요소 가져오기
+      for (WebElement webElement : driver.findElements(By.cssSelector("div.sc-fIavCj"))) {
+         nature.add(webElement.getText());
+      }
+      System.out.println(nature);
+      return nature;
+   }
+
+//      2팀꺼 캠핑 종류
+   public ArrayList<String> findEnvironment() {
+      CamfitCrawling camfitCrawling = new CamfitCrawling();
+      WebDriver driver = camfitCrawling.webDriver;
+      String url = "https://camfit.co.kr/search/result";
+      System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+      driver = new ChromeDriver();
+      driver.get(url);
+      try {
+         Thread.sleep(4000);
+      } catch (InterruptedException e) {
+         ;
+      }
+      driver.findElement(By.cssSelector("div.swiper-slide span.dlthMI")).click();
+      driver.findElement(By.cssSelector("div.sc-fIavCj"));
+      ArrayList<String> type = new ArrayList<>();
+      for (WebElement types : driver.findElements(By.cssSelector("div.sc-fIavCj"))) {
+         String getType = types.getText();
+         type.add(getType);
+      }
+//         System.out.println(type);
+      return type;
+   }
+
+   
+   
+   
+   
+   
+//      이거는 환경,지역,캠핑종류 선택하는 메소드
+   public String function() {
+      Scanner sc = new Scanner(System.in);
+      CamfitCrawling cf = new CamfitCrawling();
+      String url = "https://camfit.co.kr/search/result";
+      
+      WebDriver driver = cf.webDriver;
+      System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+      
+      driver = new ChromeDriver();
+      
+      int choice = 0;
+      String temp = "", temp2 = "";
+      
+      
+      driver.get(url);
+      try {Thread.sleep(4000);} catch (InterruptedException e) {;}
+
+      
+//      큰 지역
+      ArrayList<String> bigLocation = new ArrayList<>();
+      WebElement btn = driver.findElement(By.cssSelector("div.right-input input.jRXicD"));
+      btn.click();
+      
+      for (WebElement webElement : driver.findElements(By.cssSelector("li.jAJMLG p.typography-regular"))) {
+         bigLocation.add(webElement.getText());
+      }
+      
+      System.out.println("[1. 지역 번호를 입력해주세요 (선택완료 0)]");
+      for (int i = 0; i < bigLocation.size(); i++) {
+         System.out.println(i + 1 + ". " + bigLocation.get(i));
+      }
+      
+      
+      choice = sc.nextInt();
+      
+      temp = "ul.sc-jGprRt>li:nth-child(" + choice + ")";	//입력받은 큰지역
+      driver.findElement(By.cssSelector(temp)).click();		//클릭
+      
+      
+      //세종, 제주
+    	if(bigLocation.get(choice-1).substring(0,2).equals("세종")) {
+    		  url+="?city="+"세종특별자치시";
+    	}else if(bigLocation.get(choice-1).substring(0,2).equals("제주") ){
+    		  url+="?city="+"제주특별자치도";
+    	}else {
+    		url += "?city="+bigLocation.get(choice-1).substring(0, 2);
+    	}
+      System.out.println(url);
+      
+      
+      
+//		작은지역
+//		주소붙여넣기 하다 포기하고 지수꺼   
+//      temp2 = "";
+//      while(true) {
+//    	 System.out.println("[2. 지역 번호를 입력해주세요 (최대 3개, 없으면 0)]");
+//         choice = sc.nextInt();
+//         
+//         if(choice==0) {
+//            break;
+//         }
+//         
+//         temp = "ul.fuIZQM>li:nth-child("+ choice +")";		//입력받은 큰지역
+//         driver.findElement(By.cssSelector(temp)).click();	//클릭
+//         
+//         if(temp2.indexOf(choice)!= -1) {;
+//            int index = temp2.indexOf(choice);
+//            temp2 = temp2.replace(temp2.charAt(index)+"", "");
+//         }else {
+//            temp2 += choice;
+//            url+= smallLocation.get(choice-1).substring(0, 3);	//url누적
+//            System.out.println(url);
+//            
+//            if(temp.length()>3) {
+//            	if(url.contains(temp2)) {
+//            		url+="%2C";
+//            		
+//            	}
+//            }
+//         }
+//         if(temp2.length()==3) {	//최대 3개
+//            break;
+//         }
+//      }
+      
+//      지수꺼
+		ArrayList<String> smallLocation = new ArrayList<>();
+		for (WebElement webElement : driver.findElements(By.cssSelector("ul.sc-hAsxaJ li.jAbgnw"))) {
+			smallLocation.add(webElement.getText());
+		}
+
+		// 상세 지역이 출력 될 때 가독성이 떨어지게 출력이 되곤 했는데, 이 부분을 가독성 좋게 만들어주는 작업.
+	     int number = 0;
+		for (number = 0; number < smallLocation.size(); number++) {
+			System.out.println(number + 1 + ". " + smallLocation.get(number).replace("\n", ""));
+		}
+		System.out.println(0 + ". 선택완료");
+		System.out.println("2. 지역 번호를 입력해주세요");
+		
+		//	선택
+		temp2 = "";
+		String smallLocationNames = "";//지역들 모음
+		while (true) {
+			choice = sc.nextInt();
+			if (choice == 0) {//0입력 탈출
+				break;
+			}
+			//	지역명의 괄호 분리
+			String smallLocationName1 = smallLocation.get(choice-1).replace("\r", "").replace("\n", "");
+			String smallLocationName = smallLocationName1.substring(0,smallLocationName1.indexOf("("));
+			//			지역 클릭
+			temp = "ul.fuIZQM>li:nth-child(" + choice + ")";
+			driver.findElement(By.cssSelector(temp)).click();
+			
+			//	-1이 아니라는 것은 해당 문자가 temp2에 이미 있을 때
+			if (temp2.indexOf(choice+"") != -1) {//체크 해제
+				//choice가 temp2에서 몇번쨰 인덱스있는지
+				int index = temp2.indexOf(choice+"");
+				//해당 인덱스에 있는 문자를 빈문자열로 바꿈
+				temp2 = temp2.replace(temp2.charAt(index) + "", "");
+				
+				//지역모음에서 ,지역명이 있다면 ,지역명을 빈문자열로
+				if(smallLocationNames.contains(","+smallLocationName)) {
+					smallLocationNames = smallLocationNames.replace(","+smallLocationName, "");
+				}else {//
+					//지역모음에서 지역명이 있다면 지역명을 빈문자열로
+					smallLocationNames = smallLocationNames.replace(smallLocationName, "");
+				}
+			} else {//체크 되었을 때
+				//	값이 하나라도 있다면 ,를 붙여줌
+				if(temp2.length()>0) {
+					smallLocationNames += ",";
+				}
+				//	지역모음에 담음
+				smallLocationNames += smallLocationName;
+				//	번호모음
+				temp2 += choice;
+			}
+			if(temp2.length()==0) {//temp2가 0이라면 지역모음도 당연히 0
+				smallLocationNames = "";
+			}
+			//3개 꽉 채웠을 때
+			if (temp2.length() == 3) {
+				break;
+			}
+		}
+		
+		String smallLocationUrl ="";
+		if(temp2.length()>0) {
+			smallLocationUrl += "&majors=";
+		}
+		smallLocationUrl += smallLocationNames;
+		System.out.println(smallLocationUrl);
+		
+		driver.findElement(By.cssSelector("ul.gSSvYn")).click();
+    		  
+      
+      
+      
+//      캠핑유형
+		String[] engTypes = {"autoCamping","glamping","caravan","pension","bungalow","carCamping"};
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			;
+		}
+		driver.findElement(By.cssSelector("div.swiper-slide span.dlthMI")).click();
+		ArrayList<String> type = new ArrayList<>();
+		for (WebElement types : driver.findElements(By.cssSelector("div.sc-fIavCj"))) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				;
+			}
+			String getType = types.getText();
+			type.add(getType);
+		}
+		for (int i = 0; i < type.size(); i++) {
+			System.out.println(i + 1 + ". " + type.get(i));
+		}
+		System.out.println("0. 선택완료");
+		
+//		선택
+		temp2 = "";
+		String campTypes = "";
+		while (true) {
+			choice = sc.nextInt();
+			if (choice == 0) {
+				break;
+			}
+
+			temp = "div.MuiPaper-root div:nth-child(" + (choice + 1) + ")";
+			driver.findElement(By.cssSelector(temp)).click();
+
+			if (temp2.indexOf(choice+"") != -1) {
+				int index = temp2.indexOf(choice+"");
+				temp2 = temp2.replace(temp2.charAt(index) + "", "");
+				if(campTypes.contains(","+engTypes[choice-1])) {
+					campTypes = campTypes.replace(","+engTypes[choice-1], "");
+				}else {
+					campTypes = campTypes.replace(engTypes[choice-1], "");
+				}
+				
+			} else {
+				if(temp2.length()>0) {
+					campTypes += ",";
+				}
+				campTypes += engTypes[choice-1];
+				temp2 += choice;
+			}
+			if(temp2.length()==0) {
+				campTypes = "";
+			}
+			if (temp2.length() == 6) {
+				break;
+			}
+		}
+		String campTypeUrl="";
+		if(temp2.length()>0) {
+			campTypeUrl += "&types=";
+		}
+		campTypeUrl += campTypes;
+		System.out.println(campTypeUrl);
+
+		driver.findElement(By.cssSelector("div.MuiPaper-root div.dqOnwu svg")).click();
+      
+      
+      
+//      환경요소
+		try {Thread.sleep(1000);} catch (InterruptedException e) {;}
+		driver.findElement(By.cssSelector("div.swiper-slide-next span.dlthMI")).click();
+		ArrayList<String> nature = new ArrayList<>();
+		for (WebElement types : driver.findElements(By.cssSelector("div.fLWjSa"))) {
+			try {Thread.sleep(100);} catch (InterruptedException e) {;}
+			String getType = types.getText();
+			nature.add(getType);
+		}
+		System.out.println("0. 선택완료");
+		for (int i = 0; i < nature.size(); i++) {
+			System.out.println(i + 1 + ". " + nature.get(i));
+		}
+		System.out.println("원하는 환경의 종류를 선택하세요.");
+		
+		//선택
+		temp2 = "";
+		String locationTypes ="";
+		while (true) {
+			choice = sc.nextInt();
+			if (choice == 0) {
+				break;
+			}
+			temp = "div.MuiPaper-root div:nth-child(" + (choice + 1) + ")";
+			driver.findElement(By.cssSelector(temp)).click();
+			if (temp2.indexOf(choice+"") != -1) {
+				int index = temp2.indexOf(choice+"");
+				temp2 = temp2.replace(temp2.charAt(index) + "", "");
+				if(locationTypes.contains(","+nature.get(choice))) {
+					locationTypes = locationTypes.replace(","+nature.get(choice), "");
+				}else {
+					locationTypes = locationTypes.replace(nature.get(choice), "");
+				}
+			} else {
+				if(temp2.length()>0) {
+					locationTypes += ",";
+				}
+				locationTypes += nature.get(choice);
+				temp2 += choice;
+			}
+			if(temp2.length()==0) {
+				locationTypes = "";
+			}
+			if (temp2.length() == 9) {
+				break;
+			}
+		}
+		
+		String choicedNature = "";
+		if (temp2.length() != 0) {
+			String[] choicedTemp2 = null;
+			for (int i = 0; i < temp2.length(); i++) {
+				choicedTemp2 = temp2.split("");
+				System.out.println(choicedTemp2[i]);
+			}
+	//		temp2 = 사용자가 입력한 값이 담긴다
+			String fixednature = "&locationTypes=";
+			String natureType = "";
+			for (int i = 0; i < choicedTemp2.length; i++) {
+				switch (choicedTemp2[i]) {
+				case "1":
+					natureType += "ocean,";
+					break;
+				case "2":
+					natureType += "mountain,";
+					break;
+				case "3":
+					natureType += "forest,";
+					break;
+				case "4":
+					natureType += "river,";
+					break;
+				case "5":
+					natureType += "lake,";
+					break;
+				case "6":
+					natureType += "valley,";
+					break;
+				case "7":
+					natureType += "island,";
+					break;
+				case "8":
+					natureType += "flat,";
+					break;
+				case "9":
+					natureType += "etc,";
+					break;
+				default:
+					break;
+				}
+			}
+			choicedNature = fixednature + natureType;
+			System.out.println(choicedNature.substring(0, choicedNature.length()-1));
+		}
+		
+		driver.findElement(By.cssSelector("div.MuiPaper-root button span")).click();
+		
+		String locationTypeUrl ="";
+		if(temp2.length()>0) {
+			locationTypeUrl += "&locationTypes=";
+		}
+		locationTypeUrl += locationTypes;
+		System.out.println(locationTypeUrl);
+		
+		url=url+choicedNature+smallLocationUrl;
+//		driver.findElement(By.cssSelector("div.MuiPaper-root div.dqOnwu svg")).click();	//검색하기 안누르고
+		driver.quit();
+		
+		
+		
+		
+		
+		
+		
+//		선택한 캠핑정보
+		driver = new ChromeDriver();
+	    driver.get(url);
+
+	    //캠핑장의 주소모음
+		ArrayList<String> campAddress = new ArrayList<String>();
+		//가공되지 않은 url
+		List<WebElement> campUrls = driver.findElements(By.cssSelector("div a"));
+		//각 캠프소개로 이어지는 url모음
+		ArrayList<String> campUrl = new ArrayList<String>();
+		//가공되지 않은 campUrls에 href로 주소만 뽑아옴
+		for (WebElement webElement : campUrls) {
+			campUrl.add(webElement.getAttribute("href"));
+			System.out.println(campUrl);
+		}
+		
+		
+		//마지막에 사용할 캠핑장의 정보 모음들
+		String campList = "";
+		number = 0;
+		
+		for (String fianlUrl : campUrl) {
+			driver = new ChromeDriver();
+			driver.get(fianlUrl);
+			System.out.println(fianlUrl);
+
+			try {Thread.sleep(6000);} catch (InterruptedException e) {;}
+			
+			number++;
+			
+			//캠핑장 정보
+//			List<WebElement> campInfo = driver.findElements(By.cssSelector("li.withBtn p"));
+			List<WebElement> campInfo = driver.findElements(By.cssSelector("div.kwtjnt div div div.dxZyRF div.hnwUFZ a.href"));
+			
+			for (WebElement we : campInfo) {
+				System.out.println(we);
+			}
+			
+			//주소
+			campAddress.add(campInfo.get(1).getText());
+			System.out.println(campAddress);
+			
+			
+			
+			//캠핑장 기본 시설 가져오기
+			String basics = "";
+			List <WebElement> basicService = driver.findElements(By.cssSelector("div.sc-bBXxYQ div:nth-child(1) div.sc-grVGCS li"));
+			for (WebElement webElement : basicService) {
+				 basics += (webElement.getText() + " ");}
+			
+			//캠핑장 부가 시설 가져오기
+			String additionals = "";
+			List <WebElement> additionalService = driver.findElements(By.cssSelector("div.sc-bBXxYQ div:nth-child(2) div.sc-grVGCS li"));
+			for (WebElement webElement : additionalService) {
+				additionals += (webElement.getText() + " ");}
+			
+			//캠핑장 레저 시설 가져오기
+			String leisures = "";
+			List <WebElement> leisureService = driver.findElements(By.cssSelector("div.sc-bBXxYQ div:nth-child(3) div.sc-grVGCS li"));
+			for (WebElement webElement : leisureService) {
+				leisures += (webElement.getText() + " ");}
+			
+			//캠핑장 이름,대표 전화
+			campList += number +". "+ driver.findElement(By.className("margin")).getText()+"\n"
+					+ "대표전화 : " + campInfo.get(0).getText()+"\n"
+					+ "기본시설 : " + basics + "\n"
+					+ "부가시설 : " + additionals + "\n"
+					+ "레저시설 : " + leisures + "\n";
+			campList += "------------------------------------\n";
+			
+			
+		}
+		
+		System.out.println(campList);
+		System.out.println("번호를 입력하시면 근처 맛집을 찾아 드립니다 : ");
+		choice = sc.nextInt();
+		System.out.println(campAddress.get(choice-1));
+		return campAddress.get(choice-1);
+		
+	}
+	public static void main(String[] args) {
+		CamfitCrawling t = new CamfitCrawling();
+		t.function();
+	}
+}

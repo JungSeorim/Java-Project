@@ -1,0 +1,71 @@
+package dao;
+
+import java.util.List;
+import java.util.Scanner;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+
+public class DiningCrawling {
+   private WebDriver webDriver;
+   public static final String WEB_DRIVER_PATH = "C:/chromedriver.exe";
+   public static final String WEB_DRIVER_ID = "webdriver.chrome.driver";
+   
+   public static void main(String[] args) {
+      DiningCrawling dc = new DiningCrawling();
+      String url = "https://www.diningcode.com/search?";
+      WebDriver driver = dc.webDriver;
+      Scanner sc = new Scanner(System.in);
+      String countText = null;
+      
+//      운영체제에 드라이버 설정
+      System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+      
+//      WebDriver객체에 크롬 드라이버 대입
+      driver = new ChromeDriver();
+      
+//      원하는 경로를 브라우저에 전달
+      driver.get(url);
+      try {Thread.sleep(3000);} catch (InterruptedException e) {;}
+      
+      
+      
+      
+      //검색창 클릭
+      //검색창에 원하는 장소 입력하기
+      driver.findElement(By.xpath("//*[@id=\"root\"]/div/header/div[1]/div[2]/input")).sendKeys("서울시 강남구 역삼동");
+      try {Thread.sleep(1000);} catch (Exception e) {;}
+
+//      검색버튼
+      driver.findElement(By.cssSelector("button.search img#SearchImg"));
+      try {Thread.sleep(2000);} catch (Exception e) {;}
+      
+          
+          //현재 브라우저 창에서는 해당 주소지에 대한 맛집 리스트가 검색된 상태입니다.
+          
+          //RList라는 클래스를 가지고 있는 웹 요소 찾기 (1~5번까지의 맛집 리스트가 묶여져있는 덩어리)
+          WebElement rist1to5 = driver.findElement(By.className("RList"));
+          
+          //RList에서 ul 태그를 찾은 후, 그 중에 info라는 클래스를 가지고 있는 웹 요소들 찾기 (맛집 리스트 개별 부검 시작)
+          List<WebElement> storesList = rist1to5.findElements(By.className("RHeader"));
+          
+          
+          
+          for(WebElement store : storesList) {
+             //storesList에서 store에 하나씩 넣어주기 이후
+             //store에서  InfoHeader라는 클래스들의 텍스트 가져오기
+             String name = store.findElement(By.className("InfoHeader")).getText();
+             //상품 li에서 price라는 클래스를 가지고 있는 요소 안의 strong 태그 요소 찾아서 그 안에 적힌 텍스트 긁어오기
+             String info = store.findElement(By.className("Category")).findElement(By.tagName("span")).getText();
+             
+             System.out.println("상호명 : "+ name);
+             System.out.println("판매 음식 정보 : "+ info);
+             System.out.println("----------------------------------------");
+          }
+          
+          driver.quit();
+   }
+}

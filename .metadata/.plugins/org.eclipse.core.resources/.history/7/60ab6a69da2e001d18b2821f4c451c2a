@@ -1,0 +1,136 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import vo.RecommandVO;
+
+public class JdbcDAO {
+	public Connection connection; // 연결 객체
+	public PreparedStatement preparedStatement; // 쿼리(SQL문) 객체
+	public ResultSet resultSet; // 결과 테이블 객체
+
+	public void inputBestCamp(RecommandVO recommandVO) {
+		int count = checkAddress(recommandVO);
+		if(count != 0) {
+			updateCount(recommandVO);
+			return;	
+		}
+		System.out.println(recommandVO);
+		검색된 횟수를 올린다 
+		
+//		데이터 집어넣기
+		String query = "insert into tbl_recommand (campAddress, campingName, campType, environment, inputCount) values (?,?,?,?,?)";
+		try {
+//	         연결 객체 가져오기
+			connection = DBConnecter.getConnection();
+//	         작성한 쿼리문을 preparedStatement에 전달
+			preparedStatement = connection.prepareStatement(query);
+//	         ? 채우기(좌에서 우로 1부터 1씩 증가)
+			preparedStatement.setString(1, recommandVO.getCampAddress());
+			preparedStatement.setString(2, recommandVO.getCampingName());
+			preparedStatement.setString(3, recommandVO.getCampType());
+			preparedStatement.setString(4, recommandVO.getEnvironment());
+//	         입력된 횟수 가져옴
+			preparedStatement.setInt(5, recommandVO.getInputCount());
+
+//	         쿼리 실행 (SELECT만 extcuteQuery)
+			preparedStatement.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("checkId()에서 쿼리문 오류");
+//	       열어준 객체들을 닫을 건데,  닫는 것은 모두 finally에서 한다.
+		} finally {
+			try {
+//	            연결 객체(3개) 모두 닫기
+				if (preparedStatement != null) {
+					preparedStatement.close();
+				}
+				if (connection != null) {
+					connection.close();
+				}
+			} catch (SQLException e) {
+				throw new RuntimeException(e.getMessage());
+			}
+		}
+
+	}
+
+	public int checkAddress(RecommandVO recommandVO) {
+		int count = 0;
+		//입력된 것이 몇번인지 찾아준다.
+		String query = "select inputCount from tbl_recommand where campAddress = ?";
+		try {
+//	         연결 객체 가져오기
+			connection = DBConnecter.getConnection();
+//	         작성한 쿼리문을 preparedStatement에 전달
+			preparedStatement = connection.prepareStatement(query);
+//	         ? 채우기(좌에서 우로 1부터 1씩 증가)
+			preparedStatement.setString(1, recommandVO.getCampAddress());
+
+//	         쿼리 실행 (SELECT만 extcuteQuery)
+			resultSet = preparedStatement.executeQuery();
+//	         결과 행 1개 가져오기
+			if (resultSet.next()) {
+				count = resultSet.getInt(1);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("checkId()에서 쿼리문 오류2");
+//	       열어준 객체들을 닫을 건데,  닫는 것은 모두 finally에서 한다.
+		} finally {
+			try {
+//	            연결 객체(3개) 모두 닫기
+				if (resultSet != null) {
+					resultSet.close();
+				}
+				if (preparedStatement != null) {
+					preparedStatement.close();
+				}
+				if (connection != null) {
+					connection.close();
+				}
+			} catch (SQLException e) {
+				throw new RuntimeException(e.getMessage());
+			}
+		}
+		return count;
+	}
+	
+	public void updateCount(RecommandVO recommandVO) {
+		String query = "update tbl_recommand set inputCount = inputCount+1 where campAddress = ?";
+		try {
+//	         연결 객체 가져오기
+			connection = DBConnecter.getConnection();
+//	         작성한 쿼리문을 preparedStatement에 전달
+			preparedStatement = connection.prepareStatement(query);
+//	         ? 채우기(좌에서 우로 1부터 1씩 증가)
+//			preparedStatement.setInt(1, recommandVO.getInputCount()+1);
+			preparedStatement.setString(1, recommandVO.getCampAddress());
+
+//	         쿼리 실행 (SELECT만 extcuteQuery)
+			preparedStatement.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("checkId()에서 쿼리문 오류2");
+//	       열어준 객체들을 닫을 건데,  닫는 것은 모두 finally에서 한다.
+		} finally {
+			try {
+//	            연결 객체(3개) 모두 닫기
+				if (preparedStatement != null) {
+					preparedStatement.close();
+				}
+				if (connection != null) {
+					connection.close();
+				}
+			} catch (SQLException e) {
+				throw new RuntimeException(e.getMessage());
+			}
+		}
+	}
+}
